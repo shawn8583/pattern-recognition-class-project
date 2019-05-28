@@ -1,0 +1,17 @@
+l#!/usr/bin/python
+
+import numpy as np 
+import matplotlib as mpl
+from matplotlib import pyplot as plt
+
+
+# reading eigenface data
+filename_training_data = '/home/shawn/projects/pattern_recognition_class_project/face/csv_eigenfaces/faceR.txt'        # This is a path in Ubuntu Linux
+
+filename_testing_data = '/home/shawn/projects/pattern_recognition_class_project/face/csv_eigenfaces/faceS'
+
+# exporting csv file for data
+faceR = open(filename_training_data, "a+")
+
+csv_faceR = txt_faceR.replace(' ', ',') # replace space by comma
+faceR.close()
