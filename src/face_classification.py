@@ -22,22 +22,12 @@ with open(training_data, 'r+') as f:
       lines = f.readlines()
       for i in range(0, len(lines)):
             lines[i] = lines[i].lstrip()  # There are spaces as the first character in the oroginal data file, .lstrip will delete the spaces
-            lines[i] = lines[i].replace(' ', ',') # replacing "space" with "comma" makes the data in csv format
+            lines[i] = lines[i].replace('  ', ',')     # replacing "space" with "comma" makes the data in csv format
+            lines[i] = lines[i].replace(' ', ',')
 
-with open(training_data_csv, 'r+') as training_csv:
+with open(training_data_csv, 'r+') as training_csv:   # write changes
       training_csv.writelines(lines)
 
-# with open(training_data_csv, 'r+') as training_csv:   # write chages
-#       training_csv.writelines(lines)
-
-# with open(training_data_csv, 'r+') as training_csv:
-#       csv_data = training_csv.read()
-#       csv_data = csv_data.replace(' ', ',')
-#       training_csv.truncate(0)
-#       training_csv.write(csv_data)
-
-os.rename(rename, newname)
+os.rename(rename, newname)    # add filename extension '.csv'
 
 
-# csv_faceR = txt_faceR.replace(' ', ',') # replace space by comma
-# faceR.close()
