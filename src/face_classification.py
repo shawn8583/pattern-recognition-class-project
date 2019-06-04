@@ -2,6 +2,7 @@
 
 import os
 import csv
+import math
 import numpy as np 
 import matplotlib as mpl
 from matplotlib import pyplot as plt
@@ -82,37 +83,71 @@ if os.path.exists(label_newname) == False:
       os.rename(label_rename, label_newname)
 else:
       print("########### The csv format training label already exists! ###########")
+      print('\n')
+
+
+# ----------------------- Append labels to training data --------------------
+train = pd.read_csv(train_newname, sep=',', header=0) # 'jeader' sets which row as index for columns/ 'index_col' sets which column as index for rows
+label = pd.read_csv(label_newname, sep=',', header=0)
+race = label.iloc[:,3]
+# training_data_with_label = train.merge(race)  # cannot use merge or join here
+training_data_with_labels = pd.concat([train, race], axis=1)
+print('INFO: Labels of "RACE" have been appended to the last column of training data')
+print('INFO: Now Training data is a Dataframe with %s rows x %s columns' %(training_data_with_labels.shape[0], training_data_with_labels.shape[1]))
+print(training_data_with_labels)
 
 
 # -------------------------- Deleting Missing Rows ----------------------------
-df = pd.read_csv(train_newname, sep=',', header=None)
-missing_data_rows = []
+df = training_data_with_labels
+zero_data_rows = []
+NaN_label_rows = []
 cleared_training_data = df
-for i in range(0,2000):
+for i in range(0, 1999):
       sum = 0
       check_empty = df.iloc[i,:]
-      for a in range(1, 99):
-            sum = sum + check_empty[a]
-            if sum == 0 :
-                  cleared_training_data = cleared_training_data.drop(cleared_training_data.index[i])
-                  if a == 2:
-                        missing_data_rows.append(i)
-print('\n')
-print('INFO: These rows have invalid data: %s' %(missing_data_rows, ))
-print('INFO: All the rows with missing data have been removed')
+      if isinstance(check_empty[100], float):
+            NaN_label_rows.append(i)
+      else:
+            for a in range(1, 99):
+                  sum = sum + check_empty[a]
+                  if sum == 0 :
+                        if a == 2:  # 2 is random selected number, if will append 'a' 99 times otherwise
+                              zero_data_rows.append(i)
 
-# -------------------------- Deleting Label Rows with Missing Data0 -------------------------
-label = pd.read_csv(label_newname, sep=',', header=None)
+print('These rows have NaN labels: %s' %(NaN_label_rows))
+print('These rows have missing data: %s' %(zero_data_rows))
 
-cleared_label = label
-for i in missing_data_rows:
-      cleared_label = cleared_label.drop(cleared_label.index[i])
 
-print('INFO: Labels have been cleared, rows of labels with missing data have been deleted!')
-print('\n')
+# df = pd.read_csv(train_newname, sep=',', header=None)
+# missing_data_rows = []
+# cleared_training_data = df
+# for i in range(0,2000):
+#       sum = 0
+#       check_empty = df.iloc[i,:]
+#       for a in range(1, 99):
+#             sum = sum + check_empty[a]
+#             if sum == 0 :
+#                   cleared_training_data = cleared_training_data.drop(cleared_training_data.index[i])
+#                   if a == 2:
+#                         missing_data_rows.append(i)
+# print('\n')
+# print('INFO: These rows have invalid data: %s' %(missing_data_rows, ))
+# print('INFO: All the rows with missing data have been removed')
 
-# ---------------------- Append Labels to the last column of training data ------------------------
-#  
+# # -------------------------- Deleting Label Rows with Missing Data0 -------------------------
+# label = pd.read_csv(label_newname, sep=',', header=None)
+
+# cleared_label = label
+# for i in missing_data_rows:
+#       cleared_label = cleared_label.drop(cleared_label.index[i])
+
+# print('INFO: Labels have been cleared, rows of labels with missing data have been deleted!')
+# print('\n')
+
+# # ---------------------- Append Labels to the last column of training data ------------------------
+# race = cleared_label.iloc[:, 3]
+# cleared_training_data_with_labels = cleared_training_data.join(race)
+# print('INFO: Labels of "RACE" have been appended to the last column of training data')
 
 
 
