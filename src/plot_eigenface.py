@@ -21,6 +21,7 @@ print(train_data)
 print('***************************************************************')
 print('\n')
 
+# ------------------------------------- PCA and Normalization -------------------------------
 # train_data = np.array(df.values)
 
 # Normalize matrix and apply PCA, result in reducing the vector space to 40 out of 99 dimensions
@@ -41,4 +42,6 @@ print('\n')
 #       ord = train_data.components_[i]
 #       img = ord.reshape(10*10)
 #       ax[i].imshow(img, cmap='gray')
+
+# ---------------------------------------------------------------------------------------------
 

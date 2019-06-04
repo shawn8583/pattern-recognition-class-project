@@ -82,3 +82,40 @@ if os.path.exists(label_newname) == False:
       os.rename(label_rename, label_newname)
 else:
       print("########### The csv format training label already exists! ###########")
+
+
+# -------------------------- Deleting Missing Rows ----------------------------
+df = pd.read_csv(train_newname, sep=',', header=None)
+missing_data_rows = []
+cleared_training_data = df
+for i in range(0,2000):
+      sum = 0
+      check_empty = df.iloc[i,:]
+      for a in range(1, 99):
+            sum = sum + check_empty[a]
+            if sum == 0 :
+                  cleared_training_data = cleared_training_data.drop(cleared_training_data.index[i])
+                  if a == 2:
+                        missing_data_rows.append(i)
+print('\n')
+print('INFO: These rows have invalid data: %s' %(missing_data_rows, ))
+print('INFO: All the rows with missing data have been removed')
+
+# -------------------------- Deleting Label Rows with Missing Data0 -------------------------
+label = pd.read_csv(label_newname, sep=',', header=None)
+
+cleared_label = label
+for i in missing_data_rows:
+      cleared_label = cleared_label.drop(cleared_label.index[i])
+
+print('INFO: Labels have been cleared, rows of labels with missing data have been deleted!')
+print('\n')
+
+# ---------------------- Append Labels to the last column of training data ------------------------
+#  
+
+
+
+
+
+
