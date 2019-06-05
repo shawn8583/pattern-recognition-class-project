@@ -94,29 +94,39 @@ race = label.iloc[:,3]
 training_data_with_labels = pd.concat([train, race], axis=1)
 print('INFO: Labels of "RACE" have been appended to the last column of training data')
 print('INFO: Now Training data is a Dataframe with %s rows x %s columns' %(training_data_with_labels.shape[0], training_data_with_labels.shape[1]))
-print(training_data_with_labels)
+# print(training_data_with_labels)
 
 
 # -------------------------- Deleting Missing Rows ----------------------------
 df = training_data_with_labels
-zero_data_rows = []
-NaN_label_rows = []
+missing_rows = []
 cleared_training_data = df
 for i in range(0, 1999):
       sum = 0
       check_empty = df.iloc[i,:]
       if isinstance(check_empty[100], float):
-            NaN_label_rows.append(i)
+            missing_rows.append(i)
       else:
             for a in range(1, 99):
                   sum = sum + check_empty[a]
                   if sum == 0 :
                         if a == 2:  # 2 is random selected number, if will append 'a' 99 times otherwise
-                              zero_data_rows.append(i)
+                              missing_rows.append(i)
 
-print('These rows have NaN labels: %s' %(NaN_label_rows))
-print('These rows have missing data: %s' %(zero_data_rows))
+print('INFO: These rows have NaN labels ot zero data: %s' %(missing_rows))
 
+# drop rows with missing data
+a = 0
+for i in missing_rows:
+      cleared_training_data = cleared_training_data.drop(cleared_training_data.index[i-a])
+      a = a + 1   # having a to solve index problems after deleting rows
+      print('INFO: Deleted Row %d' %(i,))
+cleared_training_data = cleared_training_data.reset_index(drop=True)    # reset row index that has become inconsecutive after deleting missing rows
+print('INFO: Now After clearing missing data, Training data is a Dataframe with [%s rows x %s columns]' %(cleared_training_data.shape[0], cleared_training_data.shape[1]))
+print('\n')
+print('----------------------------------------- Cleared Training Data -------------------------------------------')
+print(cleared_training_data)
+print('-----------------------------------------------------------------------------------------------------------')
 
 # df = pd.read_csv(train_newname, sep=',', header=None)
 # missing_data_rows = []
@@ -149,6 +159,8 @@ print('These rows have missing data: %s' %(zero_data_rows))
 # cleared_training_data_with_labels = cleared_training_data.join(race)
 # print('INFO: Labels of "RACE" have been appended to the last column of training data')
 
+
+# ------------------------ Applying Multi-lay Perceptron ------------------------
 
 
 
