@@ -4,9 +4,16 @@ import os
 import csv
 import math
 import numpy as np 
+import pandas as pd
+import seaborn as sns
+sns.set_palette('husl')
 import matplotlib as mpl
 from matplotlib import pyplot as plt
-import pandas as pd
+
+from sklearn import metrics
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
 
 
 # reading eigenface data
@@ -127,42 +134,70 @@ print('\n')
 print('----------------------------------------- Cleared Training Data -------------------------------------------')
 print(cleared_training_data)
 print('-----------------------------------------------------------------------------------------------------------')
-
-# df = pd.read_csv(train_newname, sep=',', header=None)
-# missing_data_rows = []
-# cleared_training_data = df
-# for i in range(0,2000):
-#       sum = 0
-#       check_empty = df.iloc[i,:]
-#       for a in range(1, 99):
-#             sum = sum + check_empty[a]
-#             if sum == 0 :
-#                   cleared_training_data = cleared_training_data.drop(cleared_training_data.index[i])
-#                   if a == 2:
-#                         missing_data_rows.append(i)
-# print('\n')
-# print('INFO: These rows have invalid data: %s' %(missing_data_rows, ))
-# print('INFO: All the rows with missing data have been removed')
-
-# # -------------------------- Deleting Label Rows with Missing Data0 -------------------------
-# label = pd.read_csv(label_newname, sep=',', header=None)
-
-# cleared_label = label
-# for i in missing_data_rows:
-#       cleared_label = cleared_label.drop(cleared_label.index[i])
-
-# print('INFO: Labels have been cleared, rows of labels with missing data have been deleted!')
-# print('\n')
-
-# # ---------------------- Append Labels to the last column of training data ------------------------
-# race = cleared_label.iloc[:, 3]
-# cleared_training_data_with_labels = cleared_training_data.join(race)
-# print('INFO: Labels of "RACE" have been appended to the last column of training data')
-
+print('\n')
+print('--------- Training Dataset info ---------')
+print(cleared_training_data.info())
+print('-----------------------------------------')
+print('Number of samples in each label:')
+print(cleared_training_data['race'].value_counts())
+print('-----------------------------------------')
 
 # ------------------------ Applying Multi-lay Perceptron ------------------------
+df = cleared_training_data
+# plot features in a pair plot, will plot 99*99 figures
+# tmp = df.drop('0', axis=1)
+# g = sns.pairplot(tmp, hue='race', markers='+')
+# plt.show()
 
+g = sns.violinplot(y='race', x='50', data=df, inner='quartile')   # plot a violin plot with feature 27
+plt.show()
 
+X = df.drop(['0', 'race'], axis=1)
+y = df['race']
 
+k_range = list(range(1,26))
+scores = []
+for k in k_range:
+      knn = KNeighborsClassifier(n_neighbors=k)
+      knn.fit(X, y)
+      y_pred = knn.predict(X)
+      scores.append(metrics.accuracy_score(y, y_pred))
 
+plt.plot(k_range, scores)
+plt.xlabel('Value of k for KNN')
+plt.ylabel('Accuracy Score')
+plt.title('Accuracy Scores for Values of k of k-Nearest-Neighbors')
+plt.show()
+
+logreg = LogisticRegression()
+logreg.fit(X, y)
+y_pred = logreg.predict(X)
+print(metrics.accuracy_score(y, y_pred))
+
+# ------------ splitting dataset and predict ------------
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=5)
+print(X_train.shape)
+print(y_train.shape)
+print(X_test.shape)
+print(y_test.shape)
+
+# experimenting with different n values
+k_range = list(range(1,26))
+scores = []
+for k in k_range:
+    knn = KNeighborsClassifier(n_neighbors=k)
+    knn.fit(X_train, y_train)
+    y_pred = knn.predict(X_test)
+    scores.append(metrics.accuracy_score(y_test, y_pred))
+    
+plt.plot(k_range, scores)
+plt.xlabel('Value of k for KNN')
+plt.ylabel('Accuracy Score')
+plt.title('Accuracy Scores for Values of k of k-Nearest-Neighbors')
+plt.show()
+
+logreg = LogisticRegression()
+logreg.fit(X_train, y_train)
+y_pred = logreg.predict(X_test)
+print(metrics.accuracy_score(y_test, y_pred))
 
