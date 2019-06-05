@@ -3,6 +3,7 @@
 import os
 import csv
 import math
+import time
 import numpy as np 
 import pandas as pd
 import seaborn as sns
@@ -11,9 +12,12 @@ import matplotlib as mpl
 from matplotlib import pyplot as plt
 
 from sklearn import metrics
+from sklearn.manifold import TSNE
+from sklearn.neural_network import MLPClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
+
 
 
 # reading eigenface data
@@ -142,7 +146,7 @@ print('Number of samples in each label:')
 print(cleared_training_data['race'].value_counts())
 print('-----------------------------------------')
 
-# ------------------------ Applying KNN ------------------------
+# ------------------------ Plots ------------------------
 df = cleared_training_data
 # plot features in a pair plot, will plot 99*99 figures
 # tmp = df.drop('0', axis=1)
@@ -150,54 +154,40 @@ df = cleared_training_data
 # plt.show()
 
 g = sns.violinplot(y='race', x='50', data=df, inner='quartile')   # plot a violin plot with feature 27
-plt.show()
 
 X = df.drop(['0', 'race'], axis=1)
 y = df['race']
 
-k_range = list(range(1,26))
-scores = []
-for k in k_range:
-      knn = KNeighborsClassifier(n_neighbors=k)
-      knn.fit(X, y)
-      y_pred = knn.predict(X)
-      scores.append(metrics.accuracy_score(y, y_pred))
-
-plt.plot(k_range, scores)
-plt.xlabel('Value of k for KNN')
-plt.ylabel('Accuracy Score')
-plt.title('Accuracy Scores for Values of k of k-Nearest-Neighbors')
+# Plot 2D using TSNE
+tsne = TSNE(n_components=2, random_state=0)
+X_2d = tsne.fit_transform(X)
+label_ids = ['(white)', '(black)', '(asian)', '(hispanic)', '(other)']
+plt.figure(figsize=(10, 5))
+colors = 'r', 'g', 'b', 'c', 'm'
+for i, c, label in zip(label_ids, colors, label_ids):
+      plt.scatter(X_2d[y == i, 0], X_2d[y == i, 1], c=c, label=label, marker='+')
+# plt.scatter(X_2d[y=='(white)', 0], X_2d[y=='(white)', 1], c=y, label='white')
+# plt.scatter(X_2d[y=='(black)', 0], X_2d[y=='(black)', 1], c=b, label='black')
+# plt.scatter(X_2d[y=='asian', 0], X_2d[y=='asian', 1], c=r, label='asian')
+# plt.scatter(X_2d[y=='hispanic', 0], X_2d[y=='hispanic', 1], c=m, label='hispanic')
+# plt.scatter(X_2d[y=='other', 0], X_2d[y=='other', 1], c=g, label='other')
+plt.legend()
 plt.show()
 
-logreg = LogisticRegression()
-logreg.fit(X, y)
-y_pred = logreg.predict(X)
-print(metrics.accuracy_score(y, y_pred))
 
-# ------------ splitting dataset and predict ------------
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=5)
-print(X_train.shape)
-print(y_train.shape)
-print(X_test.shape)
-print(y_test.shape)
 
-# experimenting with different n values
-k_range = list(range(1,26))
-scores = []
-for k in k_range:
-    knn = KNeighborsClassifier(n_neighbors=k)
-    knn.fit(X_train, y_train)
-    y_pred = knn.predict(X_test)
-    scores.append(metrics.accuracy_score(y_test, y_pred))
-    
-plt.plot(k_range, scores)
-plt.xlabel('Value of k for KNN')
-plt.ylabel('Accuracy Score')
-plt.title('Accuracy Scores for Values of k of k-Nearest-Neighbors')
-plt.show()
 
-logreg = LogisticRegression()
-logreg.fit(X_train, y_train)
-y_pred = logreg.predict(X_test)
-print(metrics.accuracy_score(y_test, y_pred))
+# ------------------ Applying Multi-layer Perceptron ------------------
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
+print('There are {} samples in the training set and {} samples in the test set'.format(
+X_train.shape[0], X_test.shape[0]))
+
+def print_accuracy(f):
+    print("Accuracy = {0}%".format(100*np.sum(f(X_test) == y_test)/len(y_test)))
+    time.sleep(0.5) # to let the print get out before any progress bars
+
+nn = MLPClassifier(solver='lbfgs', alpha=1e-1, hidden_layer_sizes=(5, 2), random_state=0)
+nn.fit(X_train, y_train)
+print_accuracy(nn.predict)
+
 
