@@ -142,7 +142,7 @@ print('Number of samples in each label:')
 print(cleared_training_data['race'].value_counts())
 print('-----------------------------------------')
 
-# ------------------------ Applying Multi-lay Perceptron ------------------------
+# ------------------------ Applying KNN ------------------------
 df = cleared_training_data
 # plot features in a pair plot, will plot 99*99 figures
 # tmp = df.drop('0', axis=1)
