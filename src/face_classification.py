@@ -13,6 +13,7 @@ from matplotlib import pyplot as plt
 
 from sklearn import metrics
 from sklearn.manifold import TSNE
+from mpl_toolkits.mplot3d import Axes3D
 from sklearn.neural_network import MLPClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LogisticRegression
@@ -159,13 +160,17 @@ X = df.drop(['0', 'race'], axis=1)
 y = df['race']
 
 # Plot 2D using TSNE
-tsne = TSNE(n_components=2, random_state=0)
-X_2d = tsne.fit_transform(X)
+tsne = TSNE(n_components=3, random_state=0, n_iter=5000)
+X_3d = tsne.fit_transform(X)
 label_ids = ['(white)', '(black)', '(asian)', '(hispanic)', '(other)']
-plt.figure(figsize=(10, 5))
 colors = 'r', 'g', 'b', 'c', 'm'
+mid = int(len(X_3d)/2)
+fig = plt.figure()
+print(mid)
+ax = fig.add_subplot(111, projection='3d')
 for i, c, label in zip(label_ids, colors, label_ids):
-      plt.scatter(X_2d[y == i, 0], X_2d[y == i, 1], c=c, label=label, marker='+')
+      ax.scatter(X_3d[y == i, 0][0: ], X_3d[y==i, 1][0: ], X_3d[y==i,2][0: ], c=c, s=100, label=label, marker='+')
+      # ax.scatter(X_3d[y == i, 0][mid:], X_3d[y==i, 1][mid:], X_3d[y==i,2][mid:], c=c, s=100, label=label, marker='.')
 # plt.scatter(X_2d[y=='(white)', 0], X_2d[y=='(white)', 1], c=y, label='white')
 # plt.scatter(X_2d[y=='(black)', 0], X_2d[y=='(black)', 1], c=b, label='black')
 # plt.scatter(X_2d[y=='asian', 0], X_2d[y=='asian', 1], c=r, label='asian')
