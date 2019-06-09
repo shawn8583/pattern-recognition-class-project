@@ -231,13 +231,11 @@ def normalization_and_PCA(dimention, df):
       pts = normalize(df_matrix)
       model.fit(pts)
       pts2 = model.transform(pts)
-      return pts
+      return pts2
 
 # applying to X_train, X_test, y_train, y_test
-# X_train = normalization_and_PCA(40, X_train)
-# X_test = normalization_and_PCA(40, X_test)
-# y_train = normalization_and_PCA(40, y_train)
-# y_test = normalization_and_PCA(40, y_test)
+X_train = normalization_and_PCA(40, X_train)
+X_test = normalization_and_PCA(40, X_test)
 
 
 # ------------------ Applying Multi-layer Perceptron ------------------
