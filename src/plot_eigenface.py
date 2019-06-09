@@ -9,7 +9,7 @@ from sklearn.decomposition import PCA
 
 training_data_csv = '/home/shawn/projects/pattern_recognition_class_project/face/csv_eigenfaces/faceR_csv.csv'
 
-df = pd.read_csv(training_data_csv, sep=',', header=None)
+df = pd.read_csv(training_data_csv, sep=',', header=0)
 # print(df.values)
 
 train_data = []

@@ -14,6 +14,8 @@ from matplotlib import pyplot as plt
 from sklearn import metrics
 from sklearn.manifold import TSNE
 from mpl_toolkits.mplot3d import Axes3D
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import normalize
 from sklearn.neural_network import MLPClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LogisticRegression
@@ -221,6 +223,20 @@ y_test = df_test['race']
 plt.legend()
 plt.show()
 
+# ------------------ Normalization and Applying PCA -------------------
+def normalization_and_PCA(dimention, df):
+      df_matrix = np.matrix(df.values)
+      model = PCA(n_components=dimention)
+      pts = normalize(df_matrix)
+      model.fit(pts)
+      pts2 = model.transform(pts)
+      return pts
+
+# applying to X_train, X_test, y_train, y_test
+# X_train = normalization_and_PCA(40, X_train)
+# X_test = normalization_and_PCA(40, X_test)
+# y_train = normalization_and_PCA(40, y_train)
+# y_test = normalization_and_PCA(40, y_test)
 
 # ------------------ Applying Multi-layer Perceptron ------------------
 # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
