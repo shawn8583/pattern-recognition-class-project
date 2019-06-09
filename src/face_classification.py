@@ -223,6 +223,7 @@ y_test = df_test['race']
 plt.legend()
 plt.show()
 
+
 # ------------------ Normalization and Applying PCA -------------------
 def normalization_and_PCA(dimention, df):
       df_matrix = np.matrix(df.values)
@@ -237,6 +238,7 @@ def normalization_and_PCA(dimention, df):
 # X_test = normalization_and_PCA(40, X_test)
 # y_train = normalization_and_PCA(40, y_train)
 # y_test = normalization_and_PCA(40, y_test)
+
 
 # ------------------ Applying Multi-layer Perceptron ------------------
 # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
